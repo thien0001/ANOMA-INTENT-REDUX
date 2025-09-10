@@ -6,7 +6,7 @@
 This project is a **Frontend + Backend (mock API)** demo showcasing the concept of **Intent-Centric Applications** in the **Anoma ecosystem**.  
 Users can enter an **Intent** (e.g., *"Buy 1 ETH on Polygon"*) and the system will:
 
-**Live Demo**: [https://anoma-intent-redux-production.up.railway.app/](https://anoma-intent-redux-production.up.railway.app/)
+
 
 - Parse and process the intent using a **Golang backend**.  
 - Display the parsed result on the **frontend UI**.  
@@ -18,6 +18,8 @@ Users can enter an **Intent** (e.g., *"Buy 1 ETH on Polygon"*) and the system wi
 - Optimize **UI/UX** with animations, toast notifications, and a transaction explorer.  
 
 ---
+
+**Live Demo**: [https://anoma-intent-redux-production.up.railway.app/](https://anoma-intent-redux-production.up.railway.app/)
 
 ## 📂 Project Structure
 
