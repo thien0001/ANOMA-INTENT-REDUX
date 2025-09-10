@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Anoma Intent Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <style>
+    /* Fade + slide */
+    .fade-in { animation: fadeIn 0.6s ease-in-out; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    /* Toast animation */
+    @keyframes slideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .toast {
+      animation: slideUp 0.4s ease-out;
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white min-h-screen flex flex-col">
+
+  <!-- Navbar -->
+  <header class="bg-gray-900/60 backdrop-blur-md fixed top-0 left-0 right-0 z-50 shadow-lg">
+    <div class="max-w-6xl mx-auto flex justify-between items-center px-6 py-4">
+      <div class="flex items-center space-x-3">
+        <img src="logo.jpg" alt="logo" class="h-10">
+        <span class="font-bold text-xl">Anoma Intent</span>
+      </div>
+      <nav class="space-x-6 hidden md:block">
+        <a href="/" class="hover:text-indigo-400">Home</a>
+        <a href="#guide" class="hover:text-indigo-400">Guide</a>
+        <a href="#history" class="hover:text-indigo-400">History</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <main class="flex-1 flex flex-col items-center justify-center pt-28 pb-16 px-4">
+
+    <!-- Input Box -->
+    <div class="max-w-xl w-full bg-gray-800/70 backdrop-blur-xl rounded-2xl shadow-2xl p-6 fade-in">
+      <h1 class="text-3xl font-bold text-center mb-4">🔮 Anoma Intent Demo</h1>
+      <p class="text-gray-400 text-center mb-6">Enter intent to experience multi-chain trading</p>
+
+      <div class="flex items-center mb-4">
+        <input id="intentInput" type="text" placeholder="For example: Buy 1 ETH on Anoma"
+          class="flex-1 p-3 rounded-l-xl text-black focus:outline-none" />
+        <button onclick="sendIntent()"
+          class="bg-indigo-600 hover:bg-indigo-700 px-4 py-3 rounded-r-xl font-bold transition">Send</button>
+      </div>
+
+      <!-- Quick Chain Buttons -->
+      <div class="flex flex-wrap gap-2 justify-center mb-6">
+        <button onclick="quickIntent('Buy 1 ETH on Ethereum')" class="bg-gray-700 px-4 py-2 rounded-lg hover:bg-gray-600">Ethereum</button>
+        <button onclick="quickIntent('Buy 1 BNB on BSC')" class="bg-yellow-600 px-4 py-2 rounded-lg hover:bg-yellow-500">BSC</button>
+        <button onclick="quickIntent('Buy 1 MATIC on Polygon')" class="bg-purple-600 px-4 py-2 rounded-lg hover:bg-purple-500">Polygon</button>
+        <button onclick="quickIntent('Buy 1 ETH on Arbitrum')" class="bg-blue-600 px-4 py-2 rounded-lg hover:bg-blue-500">Arbitrum</button>
+        <button onclick="quickIntent('Buy 1 ETH on Optimism')" class="bg-red-600 px-4 py-2 rounded-lg hover:bg-red-500">Optimism</button>
+      </div>
+
+      <!-- Loading -->
+      <div id="loading" class="hidden text-center my-4">
+        <div class="animate-pulse space-y-3">
+          <div class="h-4 bg-gray-600 rounded w-3/4 mx-auto"></div>
+          <div class="h-4 bg-gray-600 rounded w-1/2 mx-auto"></div>
+        </div>
+      </div>
+
+      <!-- Result -->
+      <div id="resultBox" class="hidden mt-6 p-4 rounded-xl border border-gray-700 fade-in bg-gray-700/70">
+        <h2 class="text-xl font-semibold mb-2">Result</h2>
+        <p id="intentText" class="mb-1"></p>
+        <p id="resultText" class="mb-1"></p>
+        <a id="txHashLink" href="#" target="_blank" class="text-indigo-400 hover:underline text-sm"></a>
+      </div>
+    </div>
+
+    <!-- Guide -->
+    <section id="guide" class="max-w-2xl mt-16 bg-gray-800/70 rounded-2xl shadow-lg p-6 fade-in">
+      <h2 class="text-2xl font-bold mb-4">📖 Instruct</h2>
+      <ul class="list-disc list-inside space-y-2 text-gray-300">
+        <li>Enter intent (For example: <em>"Buy 2 ETH on Polygon"</em>).</li>
+        <li>The system will analyze and return result with chain info.</li>
+        <li>Click on Tx Hash to view transaction details in Explorer.</li>
+        <li>Transaction history can be filtered by chain.</li>
+      </ul>
+    </section>
+
+    <!-- History -->
+    <section id="history" class="max-w-2xl mt-16 w-full fade-in">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-2xl font-bold">📜 Transaction History</h2>
+        <select id="chainFilter" onchange="renderHistory()" class="bg-gray-700 text-white p-2 rounded">
+          <option value="All">All</option>
+          <option value="Ethereum">Ethereum</option>
+          <option value="Polygon">Polygon</option>
+          <option value="BSC">BSC</option>
+          <option value="Arbitrum">Arbitrum</option>
+          <option value="Optimism">Optimism</option>
+        </select>
+      </div>
+      <ul id="historyList" class="space-y-3"></ul>
+    </section>
+
+
+
+
+  </main>
+
+
+
+  <!-- Footer -->
+  <footer class="bg-gray-800 py-4 text-center text-gray-500">
+    © 2025 Anoma Intent Demo – Built with 💜
+  </footer>
+
+  <!-- Toast -->
+  <div id="toastContainer" class="fixed bottom-4 right-4 space-y-2 z-50"></div>
+
+  <script>
+    const history = [];
+    // const chainLogos = {
+    //   Ethereum: "https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=029",
+    //   Polygon: "https://cryptologos.cc/logos/polygon-matic-logo.svg?v=029",
+    //   BSC: "https://cryptologos.cc/logos/bnb-bnb-logo.svg?v=029",
+    //   Arbitrum: "https://cryptologos.cc/logos/arbitrum-arb-logo.svg?v=029",
+    //   Optimism: "https://cryptologos.cc/logos/optimism-ethereum-op-logo.svg?v=029"
+    // };
+ 
+const chainLogos = {
+  Ethereum: "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/eth.png",
+  BSC: "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/bnb.png",
+  Polygon: "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/matic.png",
+  Arbitrum: "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/arb.png",
+  Optimism: "https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/128/color/op.png"
+};
+
+
+    // Toast
+    function showToast(msg, type="info") {
+      const container = document.getElementById("toastContainer");
+      const toast = document.createElement("div");
+      toast.className = `toast px-4 py-3 rounded-lg shadow-lg text-white ${
+        type==="success" ? "bg-green-600" : type==="error" ? "bg-red-600" : "bg-gray-700"
+      }`;
+      toast.innerText = msg;
+      container.appendChild(toast);
+      setTimeout(() => toast.remove(), 3000);
+    }
+
+    async function sendIntent() {
+      const intent = document.getElementById("intentInput").value.trim();
+      if (!intent) {
+        showToast("⚠️ Please enter intent", "error");
+        return;
+      }
+      toggleLoading(true);
+      try {
+        const res = await fetch("/intent", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text: intent })
+        });
+        const data = await res.json();
+        toggleLoading(false);
+        showResult(data);
+        showToast("✅ Intent processed successfully", "success");
+        await loadHistory();
+      } catch (e) {
+        toggleLoading(false);
+        showToast("❌ Error sending intent", "error");
+      }
+    }
+
+    function toggleLoading(show) {
+      document.getElementById("loading").classList.toggle("hidden", !show);
+      if (show) document.getElementById("resultBox").classList.add("hidden");
+    }
+
+    function quickIntent(text) {
+      const input = document.getElementById("intentInput");
+      input.value = "";
+      input.placeholder = text;
+    }
+
+    function showResult(data) {
+      const box = document.getElementById("resultBox");
+      box.classList.remove("hidden");
+      document.getElementById("intentText").innerText = `📝 Intent: ${data.Action} ${data.Amount} ${data.Token} (${data.Chain})`;
+      document.getElementById("resultText").innerText = `🔍 Gas Fee: ${data.GasFee}`;
+      const txLink = document.getElementById("txHashLink");
+      txLink.href = `/explorer.html?tx=${data.TxHash}`;
+      txLink.innerText = `🔗 Tx Hash: ${data.TxHash}`;
+    }
+
+    async function loadHistory() {
+      const res = await fetch("/history");
+      const data = await res.json();
+      history.splice(0, history.length, ...data);
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const list = document.getElementById("historyList");
+      list.innerHTML = "";
+      const filter = document.getElementById("chainFilter").value;
+      const filtered = filter === "All" ? history : history.filter(tx => tx.Chain === filter);
+
+      filtered.slice(0, 8).forEach(tx => {
+        const li = document.createElement("li");
+        li.innerHTML = `
+          <div class="p-4 bg-gray-800/70 rounded-lg shadow-md flex justify-between items-center hover:bg-gray-700 transition">
+            <div class="flex items-center gap-3">
+              <img src="${chainLogos[tx.Chain] || ""}" alt="${tx.Chain}"  class="h-6 w-6 object-contain rounded-full bg-white p-0.5">
+              <div>
+                <p class="font-semibold">${tx.Action} ${tx.Amount} ${tx.Token} <span class="text-gray-400">(${tx.Chain})</span></p>
+                <a href="/explorer.html?tx=${tx.TxHash}" class="text-indigo-400 hover:underline text-sm">🔗 ${tx.TxHash}</a>
+              </div>
+            </div>
+            <span class="text-gray-400 text-sm">${tx.GasFee}</span>
+          </div>
+        `;
+        list.appendChild(li);
+      });
+    }
+
+    window.onload = loadHistory;
+  </script>
+
+</body>
+</html>
