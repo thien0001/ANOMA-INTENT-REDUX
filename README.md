@@ -73,7 +73,7 @@ go run main.go
 
 
 By default, the server runs on:
-👉 http://localhost:8080
+👉 http://localhost:3000
 
 Available endpoints:
 
@@ -92,7 +92,7 @@ static/index.html
 
 Option 2 (recommended): Access it via the backend server:
 
-http://localhost:8080
+http://localhost:3000
 
 🎮 Demo Flow
 
