@@ -1,4 +1,4 @@
-Perfect 👍 Here’s the English version of your README.md, fully professional and ready for GitHub submission:
+
 
 # 🔮 ANOMA INTENT: REDUX 🔮
 
@@ -124,6 +124,3 @@ MIT License – Free to use for learning and demo purposes.
 
 ---
 
-🔥 This version is **fully professional in English** and matches the **submission requirements**.  
-
-Do you also want me to draft a **sample `main.go` + `handlers/intent.go` + `utils/storage.go`** (working mock backend) so your repo is ready-to-run with just `go run main.go`?
